@@ -43,23 +43,22 @@ public class Main {
                     System.out.println("Номер продукта указан неверно, допустимо значение от 1 до " + products.length);
                     continue;
                 }
-                //if (productCount <= 0) {
-                //System.out.println("Количество продуктов не может быть нулем или отрицательным");
-                //continue;
-                //}
+
             } catch (NumberFormatException e) {
                 System.out.println("Данные введены некорректно! Пример правильного ввода: 1 1, вы ввели: " + input);
                 continue;
             }
 
-            quantity[productNumber] = productCount + quantity[productNumber];
-
-            total = productCount * prices[productNumber];
-            //totalPay = totalPay + total - discount;
-
+            // обнуление продуктов: важно! продуктов не может быть меньше 0
             if (productCount == 0) {
                 quantity[productNumber] = 0;
+                continue;
+            }
+            quantity[productNumber] = productCount + quantity[productNumber];
 
+            if (quantity[productNumber] < 0) {
+                quantity[productNumber] = 0;
+                continue;
             }
 
             // провереряем идет ли продукт по акции "3 по цене 2х"
@@ -67,29 +66,26 @@ public class Main {
             if (Arrays.asList(priceThreeEqualsTwo).contains(checkingPromo)) {
                 discountPrice = (productCount / 3) * prices[productNumber];
                 productCount = productCount - (productCount / 3);
-                // total = productCount * prices[productNumber];
+                total = productCount * prices[productNumber];
 
-            } //else {
-            //total = productCount * prices[productNumber];
-            // }
+            } else {
+                total = productCount * prices[productNumber];
+            }
 
             discount += discountPrice;
-
-
         }
-
 
         System.out.println("Ваша корзина: ");
 
         for (int i = 0; i < quantity.length; i++) {
             if (quantity[i] != 0) {
                 System.out.println(products[i] + " " + quantity[i] + " шт " + prices[i] + " руб/шт " + (quantity[i] * prices[i]) + " руб в сумме");
-                totalPay += (quantity[i] * prices[i]) - discount;
+                totalPay += (quantity[i] * prices[i]);
             }
         }
         if (discount != 0) {
             System.out.println("Скидка на товар по акции: " + discount);
         }
-        System.out.println("Итого к оплате: " + totalPay + " руб");
+        System.out.println("Итого к оплате: " + (totalPay - discount) + " руб");
     }
 }
